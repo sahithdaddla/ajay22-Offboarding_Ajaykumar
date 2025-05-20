@@ -1,0 +1,743 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HR Offboarding Dashboard</title>
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --success: #4cc9f0;
+      --danger: #f72585;
+      --warning: #f8961e;
+      --info: #4895ef;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --white: #ffffff;
+      --gray: #6c757d;
+      --bright-blue: #00b4d8;
+      --bright-green: #38b000;
+      --bright-orange: #ff7b00;
+      --bright-purple: #7209b7;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #ffffff;
+      color: var(--dark);
+      transition: all 0.3s ease;
+    }
+
+    header {
+      position: relative;
+      text-align: center;
+      height: 140px;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      color: #f8f9fa;
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      padding: 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      font-weight: 700;
+      position: relative;
+      z-index: 2;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    header p {
+      font-weight: 300;
+      font-size: 1.1rem;
+      margin-top: 15px;
+      max-width: 700px;
+      opacity: 0.9;
+      z-index: 2;
+    }
+
+    .banner-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .circle {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: moveCircles 10s infinite linear;
+    }
+
+    @keyframes moveCircles {
+      0% { transform: translateY(0) translateX(0); }
+      50% { transform: translateY(-50%) translateX(-50%); }
+      100% { transform: translateY(0) translateX(0); }
+    }
+
+    .circle:nth-child(1) {
+      top: 10%;
+      left: 20%;
+      animation-duration: 8s;
+    }
+
+    .circle:nth-child(2) {
+      top: 50%;
+      left: 70%;
+      animation-duration: 12s;
+    }
+
+    .circle:nth-child(3) {
+      top: 80%;
+      left: 40%;
+      animation-duration: 15s;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .dashboard-card {
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dashboard-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--bright-blue), var(--bright-green));
+      transition: all 0.3s ease;
+    }
+
+    .dashboard-card:hover::after {
+      width: 8px;
+    }
+
+    .action-title {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: var(--bright-blue);
+    }
+
+    .filter-section {
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .filter-section input {
+      padding: 0.5rem;
+      border: 1px solid var(--gray);
+      border-radius: 4px;
+      font-size: 1rem;
+      width: 200px;
+    }
+
+    .attendance-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .attendance-table th,
+    .attendance-table td {
+      padding: 0.8rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .attendance-table th {
+      background: linear-gradient(135deg, rgba(0, 180, 216, 0.1), rgba(114, 9, 183, 0.1));
+      color: var(--bright-blue);
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .attendance-table th:hover {
+      background: linear-gradient(135deg, rgba(0, 180, 216, 0.2), rgba(114, 9, 183, 0.2));
+    }
+
+    .attendance-table td {
+      color: var(--dark);
+    }
+
+    .no-records {
+      text-align: center;
+      padding: 2rem;
+      color: var(--gray);
+      font-style: italic;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .pagination button {
+      padding: 0.5rem 1rem;
+      border: none;
+      background: var(--bright-blue);
+      color: var(--white);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .pagination button:hover {
+      background: var(--primary);
+    }
+
+    .pagination button:disabled {
+      background: var(--gray);
+      cursor: not-allowed;
+    }
+
+    .view-button {
+      padding: 0.5rem 1rem;
+      border: none;
+      background: var(--bright-green);
+      color: var(--white);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .view-button:hover {
+      background: var(--success);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-content h3 {
+      margin-bottom: 1rem;
+      color: var(--bright-blue);
+    }
+
+    .modal-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1rem;
+    }
+
+    .modal-content th,
+    .modal-content td {
+      padding: 0.5rem;
+      border: 1px solid var(--gray);
+      text-align: left;
+    }
+
+    .modal-content th {
+      background: var(--light);
+      color: var(--dark);
+      font-weight: 500;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .modal-buttons button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .close-button {
+      background: var(--gray);
+      color: var(--white);
+    }
+
+    .close-button:hover {
+      background: var(--dark);
+    }
+
+    .download-button {
+      background: var(--bright-orange);
+      color: var(--white);
+    }
+
+    .download-button:hover {
+      background: var(--warning);
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, var(--bright-blue), var(--bright-purple));
+      color: var(--white);
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      z-index: 1100;
+      transform: translateX(200%);
+      transition: transform 0.3s ease;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast i {
+      margin-right: 0.5rem;
+      font-size: 1.2rem;
+    }
+
+    .toast.success {
+      background: linear-gradient(135deg, var(--bright-green), var(--bright-blue));
+    }
+
+    .toast.error {
+      background: linear-gradient(135deg, var(--danger), #b5179e);
+    }
+
+    @media (max-width: 768px) {
+      .attendance-table th,
+      .attendance-table td {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .filter-section {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .filter-section input {
+        width: 100%;
+      }
+
+      .modal-content {
+        padding: 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header h1 {
+        font-size: 1.8rem;
+      }
+
+      header p {
+        font-size: 0.9rem;
+      }
+
+      .dashboard-card {
+        padding: 1.5rem 1rem;
+      }
+
+      .action-title {
+        font-size: 1.1rem;
+      }
+
+      .attendance-table th,
+      .attendance-table td {
+        font-size: 0.8rem;
+      }
+
+      .modal-content {
+        padding: 1rem;
+        width: 95%;
+      }
+
+      .modal-buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .modal-buttons button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="banner-background">
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+    </div>
+    <h1>HR Offboarding Dashboard</h1>
+    <p>View all employee offboarding records</p>
+  </header>
+
+  <div class="container">
+    <div class="dashboard-card">
+      <div class="history-card">
+        <h3 class="action-title">All Offboarding Records</h3>
+        <div class="filter-section">
+          <input type="text" id="empIdFilter" placeholder="Filter by Employee ID" />
+          <input type="text" id="nameFilter" placeholder="Filter by Name" />
+        </div>
+        <table class="attendance-table" id="offboardingTable">
+          <thead>
+            <tr>
+              <th onclick="sortTable('emp_id')">Employee ID <i class="fas fa-sort"></i></th>
+              <th onclick="sortTable('name')">Name <i class="fas fa-sort"></i></th>
+              <th>Email</th>
+              <th>Department</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="offboardingBody">
+            <tr><td colspan="5" class="no-records">Loading offboarding records...</td></tr>
+          </tbody>
+        </table>
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="viewModal">
+    <div class="modal-content">
+      <h3>Offboarding Details</h3>
+      <table>
+        <tr><th>Employee ID</th><td id="modal-emp_id"></td></tr>
+        <tr><th>Name</th><td id="modal-name"></td></tr>
+        <tr><th>Email</th><td id="modal-email"></td></tr>
+        <tr><th>Department</th><td id="modal-department"></td></tr>
+        <tr><th>Role</th><td id="modal-role"></td></tr>
+        <tr><th>Laptop Returned</th><td id="modal-laptop_returned"></td></tr>
+        <tr><th>Phone Returned</th><td id="modal-phone_returned"></td></tr>
+        <tr><th>Access Cards Returned</th><td id="modal-access_cards_returned"></td></tr>
+        <tr><th>Final Paycheck</th><td id="modal-final_paycheck"></td></tr>
+        <tr><th>Benefits Cleared</th><td id="modal-benefits_cleared"></td></tr>
+        <tr><th>Exit Interview</th><td id="modal-exit_interview"></td></tr>
+        <tr><th>Reason for Leaving</th><td id="modal-reason_for_leaving"></td></tr>
+        <tr><th>Submission Date</th><td id="modal-submission_date"></td></tr>
+      </table>
+      <div class="modal-buttons">
+        <button class="download-button" id="downloadButton">Download PDF</button>
+        <button class="close-button" id="closeModal">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toastNotification">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMessage">Offboarding records fetched successfully!</span>
+  </div>
+
+  <script>
+    const { jsPDF } = window.jspdf;
+    const offboardingBody = document.getElementById('offboardingBody');
+    const toastNotification = document.getElementById('toastNotification');
+    const empIdFilter = document.getElementById('empIdFilter');
+    const nameFilter = document.getElementById('nameFilter');
+    const pagination = document.getElementById('pagination');
+    const viewModal = document.getElementById('viewModal');
+    const closeModal = document.getElementById('closeModal');
+    const downloadButton = document.getElementById('downloadButton');
+    let allRecords = [];
+    let currentPage = 1;
+    const recordsPerPage = 10;
+    let sortColumn = 'emp_id';
+    let sortDirection = 'asc';
+    let currentRecord = null;
+
+    async function fetchAllOffboardingRecords() {
+      try {
+        const response = await fetch('http://localhost:3000/api/offboarding/all', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        console.log('Response Status:', response.status);
+        console.log('Response Headers:', response.headers.get('content-type'));
+        const data = await response.json();
+        console.log('Response Data:', data);
+        if (!response.ok) {
+          throw new Error(data.error || data.details || 'Failed to fetch offboarding records');
+        }
+        return data;
+      } catch (err) {
+        console.error('Fetch Error:', err);
+        throw err;
+      }
+    }
+
+    function formatDateTime(isoString) {
+      if (!isoString) return '--';
+      const date = new Date(isoString);
+      return date.toLocaleString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        day: 'numeric',
+        month: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      }).toLowerCase();
+    }
+
+    function showToast(message, type) {
+      const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+      toastNotification.innerHTML = `
+        <i class="fas ${icon}"></i>
+        <span id="toastMessage">${message}</span>
+      `;
+      toastNotification.className = `toast ${type}`;
+      toastNotification.classList.add('show');
+      setTimeout(() => {
+        toastNotification.classList.remove('show');
+      }, 3000);
+    }
+
+    function filterRecords(records) {
+      const empIdValue = empIdFilter.value.trim().toUpperCase();
+      const nameValue = nameFilter.value.trim().toLowerCase();
+      if (!empIdValue && !nameValue) return records;
+      return records.filter(record => {
+        const matchesEmpId = empIdValue ? record.emp_id.includes(empIdValue) : true;
+        const matchesName = nameValue ? record.name.toLowerCase().includes(nameValue) : true;
+        return matchesEmpId && matchesName;
+      });
+    }
+
+    function sortTable(column) {
+      if (sortColumn === column) {
+        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortColumn = column;
+        sortDirection = 'asc';
+      }
+      renderOffboardingRecords();
+    }
+
+    function sortRecords(records) {
+      return records.sort((a, b) => {
+        let valA = a[sortColumn];
+        let valB = b[sortColumn];
+        if (sortColumn === 'submission_date') {
+          valA = new Date(valA).getTime();
+          valB = new Date(valB).getTime();
+        }
+        if (sortDirection === 'asc') {
+          return valA > valB ? 1 : -1;
+        } else {
+          return valA < valB ? 1 : -1;
+        }
+      });
+    }
+
+    function showModal(record) {
+      currentRecord = record;
+      document.getElementById('modal-emp_id').textContent = record.emp_id || '--';
+      document.getElementById('modal-name').textContent = record.name || '--';
+      document.getElementById('modal-email').textContent = record.email || '--';
+      document.getElementById('modal-department').textContent = record.department || '--';
+      document.getElementById('modal-role').textContent = record.role ? record.role.charAt(0).toUpperCase() + record.role.slice(1) : '--';
+      document.getElementById('modal-laptop_returned').textContent = record.laptop_returned || '--';
+      document.getElementById('modal-phone_returned').textContent = record.phone_returned || '--';
+      document.getElementById('modal-access_cards_returned').textContent = record.access_cards_returned || '--';
+      document.getElementById('modal-final_paycheck').textContent = record.final_paycheck ? `₹${record.final_paycheck}` : '--';
+      document.getElementById('modal-benefits_cleared').textContent = record.benefits_cleared || '--';
+      document.getElementById('modal-exit_interview').textContent = record.exit_interview || '--';
+      document.getElementById('modal-reason_for_leaving').textContent = record.reason_for_leaving ? record.reason_for_leaving.replace(/-/g, ' ').charAt(0).toUpperCase() + record.reason_for_leaving.replace(/-/g, ' ').slice(1) : '--';
+      document.getElementById('modal-submission_date').textContent = formatDateTime(record.submission_date);
+      viewModal.style.display = 'flex';
+    }
+
+    function downloadPDF() {
+      if (!currentRecord) return;
+      const doc = new jsPDF();
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(16);
+      doc.text('Offboarding Record', 20, 20);
+      doc.setFontSize(12);
+      doc.setLineWidth(0.5);
+
+      const headers = [
+        ['Field', 'Value']
+      ];
+      const data = [
+        ['Employee ID', currentRecord.emp_id || '--'],
+        ['Name', currentRecord.name || '--'],
+        ['Email', currentRecord.email || '--'],
+        ['Department', currentRecord.department || '--'],
+        ['Role', currentRecord.role ? currentRecord.role.charAt(0).toUpperCase() + currentRecord.role.slice(1) : '--'],
+        ['Laptop Returned', currentRecord.laptop_returned || '--'],
+        ['Phone Returned', currentRecord.phone_returned || '--'],
+        ['Access Cards Returned', currentRecord.access_cards_returned || '--'],
+        ['Final Paycheck', currentRecord.final_paycheck ? `${currentRecord.final_paycheck}` : '--'],
+        ['Benefits Cleared', currentRecord.benefits_cleared || '--'],
+        ['Exit Interview', currentRecord.exit_interview || '--'],
+        ['Reason for Leaving', currentRecord.reason_for_leaving ? currentRecord.reason_for_leaving.replace(/-/g, ' ').charAt(0).toUpperCase() + currentRecord.reason_for_leaving.replace(/-/g, ' ').slice(1) : '--'],
+        ['Submission Date', formatDateTime(currentRecord.submission_date)]
+      ];
+
+      doc.autoTable({
+        head: headers,
+        body: data,
+        startY: 30,
+        theme: 'grid',
+        headStyles: { fillColor: [0, 180, 216], textColor: [255, 255, 255], fontStyle: 'bold' },
+        bodyStyles: { textColor: [33, 37, 41] },
+        alternateRowStyles: { fillColor: [248, 249, 250] },
+        margin: { left: 20, right: 20 }
+      });
+
+      doc.save(`offboarding_${currentRecord.emp_id}.pdf`);
+    }
+
+    function renderOffboardingRecords() {
+      let filteredRecords = filterRecords(allRecords);
+      filteredRecords = sortRecords(filteredRecords);
+      const totalPages = Math.ceil(filteredRecords.length / recordsPerPage);
+      currentPage = Math.min(currentPage, totalPages || 1);
+
+      const start = (currentPage - 1) * recordsPerPage;
+      const end = start + recordsPerPage;
+      const paginatedRecords = filteredRecords.slice(start, end);
+
+      offboardingBody.innerHTML = '';
+      if (!paginatedRecords.length) {
+        offboardingBody.innerHTML = '<tr><td colspan="5" class="no-records">No offboarding records found</td></tr>';
+        pagination.innerHTML = '';
+        return;
+      }
+
+      paginatedRecords.forEach(record => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${record.emp_id}</td>
+          <td>${record.name}</td>
+          <td>${record.email}</td>
+          <td>${record.department || '--'}</td>
+          <td><button class="view-button" onclick="showModal(${JSON.stringify(record).replace(/"/g, '&quot;')})">View</button></td>
+        `;
+        offboardingBody.appendChild(row);
+      });
+
+      pagination.innerHTML = '';
+      const prevButton = document.createElement('button');
+      prevButton.textContent = 'Previous';
+      prevButton.disabled = currentPage === 1;
+      prevButton.onclick = () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderOffboardingRecords();
+        }
+      };
+      pagination.appendChild(prevButton);
+
+      const pageInfo = document.createElement('span');
+      pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+      pageInfo.style.padding = '0.5rem 1rem';
+      pagination.appendChild(pageInfo);
+
+      const nextButton = document.createElement('button');
+      nextButton.textContent = 'Next';
+      nextButton.disabled = currentPage === totalPages;
+      nextButton.onclick = () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          renderOffboardingRecords();
+        }
+      };
+      pagination.appendChild(nextButton);
+    }
+
+    async function loadOffboardingRecords() {
+      try {
+        allRecords = await fetchAllOffboardingRecords();
+        renderOffboardingRecords();
+        showToast('Offboarding records fetched successfully', 'success');
+      } catch (err) {
+        showToast(`Error: ${err.message}`, 'error');
+        offboardingBody.innerHTML = '<tr><td colspan="5" class="no-records">Failed to load offboarding records</td></tr>';
+        pagination.innerHTML = '';
+      }
+    }
+
+    empIdFilter.addEventListener('input', () => {
+      currentPage = 1;
+      renderOffboardingRecords();
+    });
+
+    nameFilter.addEventListener('input', () => {
+      currentPage = 1;
+      renderOffboardingRecords();
+    });
+
+    closeModal.addEventListener('click', () => {
+      viewModal.style.display = 'none';
+      currentRecord = null;
+    });
+
+    downloadButton.addEventListener('click', downloadPDF);
+
+    document.addEventListener('DOMContentLoaded', loadOffboardingRecords);
+  </script>
+</body>
+</html>
