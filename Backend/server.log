@@ -1,8 +1,0 @@
-{"level":"info","message":"Database connection successful: 2025-05-20T11:23:49.486Z","timestamp":"2025-05-20T11:23:49.488Z"}
-{"level":"info","message":"Database initialized successfully with sample data","timestamp":"2025-05-20T11:23:50.306Z"}
-{"level":"info","message":"Database connection successful: 2025-05-20T11:24:16.924Z","timestamp":"2025-05-20T11:24:16.930Z"}
-{"level":"info","message":"Database initialized successfully with sample data","timestamp":"2025-05-20T11:24:17.570Z"}
-{"level":"info","message":"Server running on port 3000","timestamp":"2025-05-20T11:24:17.574Z"}
-{"level":"info","message":"Database connection successful: 2025-05-20T11:28:08.119Z","timestamp":"2025-05-20T11:28:08.123Z"}
-{"level":"info","message":"Database initialized successfully with sample data","timestamp":"2025-05-20T11:28:08.860Z"}
-{"level":"info","message":"Server running on port 3000","timestamp":"2025-05-20T11:28:08.875Z"}
