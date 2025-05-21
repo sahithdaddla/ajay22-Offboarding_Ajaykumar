@@ -244,6 +244,11 @@
             transform: translateY(0);
         }
 
+        .form-actions {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
         .ticket-preview {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -555,9 +560,9 @@
                     <label for="empEmail">Email Address</label>
                     <input type="email" id="empEmail" class="form-control" 
                            placeholder="Employee Email" 
-                           pattern="^[a-zA-Z][a-zA-Z0-9._-]{1,}[a-zA-Z]@(?:gmail\.com|outlook\.com|[\w-]+\.(?:co|in|org))$" 
+                           pattern="^[a-zA-Z][a-zA-Z0-9._-]*@(?:gmail\.com|outlook\.com|[\w-]+\.(?:co|in|org))$" 
                            required minlength="8" maxlength="50">
-                    <div class="invalid-feedback">Email must start with a letter, end with a letter, and have a domain of gmail.com, outlook.com, or *.co/in/org</div>
+                    <div class="invalid-feedback">Email must start with a letter, contain at least 3 alphabets, and have a domain of gmail.com, outlook.com, or *.co/in/org</div>
                 </div>
 
                 <div class="form-group">
@@ -610,9 +615,11 @@
                     <div class="invalid-feedback">Please provide a valid description (min 10 chars with letters, no leading/trailing spaces, no consecutive spaces)</div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-paper-plane"></i> Submit Ticket
-                </button>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Submit Ticket
+                    </button>
+                </div>
             </form>
 
             <div id="ticketPreview" class="ticket-preview">
@@ -725,8 +732,16 @@
 
         // Custom validation for email
         function validateEmail(email) {
-            const regex = /^[a-zA-Z][a-zA-Z0-9._-]{1,}[a-zA-Z]@(?:gmail\.com|outlook\.com|[\w-]+\.(?:co|in|org))$/;
-            return regex.test(email);
+            // Check pattern: starts with letter, followed by any allowed chars, then @domain
+            const regex = /^[a-zA-Z][a-zA-Z0-9._-]*@(?:gmail\.com|outlook\.com|[\w-]+\.(?:co|in|org))$/;
+            if (!regex.test(email)) {
+                return false;
+            }
+
+            // Count alphabetic characters in local part
+            const localPart = email.split('@')[0];
+            const alphaCount = (localPart.match(/[a-zA-Z]/g) || []).length;
+            return alphaCount >= 3;
         }
 
         // Custom validation for description
