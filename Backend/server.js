@@ -19,7 +19,7 @@ const pool = new Pool({
 app.use(cors({
   origin: ['http://51.21.167.155:8219', 'http://51.21.167.155:8220'],
   methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type']
+  allowedHeaders: ['Content-Type'],
  credentials: true
 }));
 app.use(express.json());
