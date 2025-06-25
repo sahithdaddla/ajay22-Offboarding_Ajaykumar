@@ -4,22 +4,23 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const port = 3000;
+const port = 3054;
 
 // PostgreSQL connection
 const pool = new Pool({
   user: 'postgres',
-  host: 'localhost',
+  host: 'postgres',
   database: 'new_employee_db',
-  password: 'Password@12345',
+  password: 'admin123',
   port: 5432,
 });
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:5501'],
+  origin: ['http://51.21.167.155:8219', 'http://51.21.167.155:8220'],
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type']
+ credentials: true
 }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -126,9 +127,9 @@ pool.connect()
     console.log('✅ Connected to database');
     initializeDatabase().then(() => {
       app.listen(port, () => {
-        console.log(`🚀 Server running on http://localhost:${port}`);
-        console.log(`📄 Offboarding Form: http://localhost:${port}/offboarding.html`);
-        console.log(`📊 HR Offboarding Dashboard: http://localhost:${port}/hrOffboarding.html`);
+        console.log(`🚀 Server running on http://51.21.167.155:${port}`);
+        console.log(`📄 Offboarding Form: http://51.21.167.155:${port}/offboarding.html`);
+        console.log(`📊 HR Offboarding Dashboard: http://51.21.167.155:${port}/hrOffboarding.html`);
       });
     });
   })
