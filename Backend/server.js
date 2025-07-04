@@ -17,11 +17,12 @@ const pool = new Pool({
 
 // Middleware
 app.use(cors({
-  origin: ['http://51.21.167.155:8219', 'http://51.21.167.155:8220'],
+  origin: ['http://13.49.68.57:8219', 'http://13.49.68.57:8220'],
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type'],
  credentials: true
 }));
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -127,9 +128,9 @@ pool.connect()
     console.log('✅ Connected to database');
     initializeDatabase().then(() => {
       app.listen(port, () => {
-        console.log(`🚀 Server running on http://51.21.167.155:${port}`);
-        console.log(`📄 Offboarding Form: http://51.21.167.155:${port}/offboarding.html`);
-        console.log(`📊 HR Offboarding Dashboard: http://51.21.167.155:${port}/hrOffboarding.html`);
+        console.log(`🚀 Server running on http://13.49.68.57:${port}`);
+        console.log(`📄 Offboarding Form: http://13.49.68.57:${port}/offboarding.html`);
+        console.log(`📊 HR Offboarding Dashboard: http://13.49.68.57:${port}/hrOffboarding.html`);
       });
     });
   })
