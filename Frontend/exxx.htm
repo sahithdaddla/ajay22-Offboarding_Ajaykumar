@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Employee Offboarding Form</title>
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
   <style>
     body {
@@ -125,7 +127,7 @@
     input, select, textarea {
       width: 97%;
       padding: 10px;
-      margin-bottom: 5px;
+      margin-bottom: 15px;
       border: 1px solid #ccc;
       border-radius: 4px;
       font-size: 19px;
@@ -394,8 +396,7 @@
     .error-message {
       color: red;
       font-size: 0.9rem;
-      margin-top: 0;
-      margin-bottom: 10px;
+      margin-top: 5px;
       display: none;
     }
   </style>
@@ -416,20 +417,20 @@
       <div class="section">
         <h2><i class="fas fa-user"></i> Employee Information</h2>
         <label for="employee-name">Full Name</label>
-        <input type="text" id="employee-name" name="employee-name" required minlength="3" maxlength="40"
+        <input type="text" id="employee-name" name="employee-name" required minlength="3" maxlength="100"
                pattern="^[A-Za-z]+(?:\.[A-Za-z]+)*(?: [A-Za-z]+)*(?:\.[A-Za-z]+){0,3}$"
                placeholder="Enter Full Name" title="Name cannot start with a space, no consecutive spaces allowed, maximum 8 spaces and 3 periods allowed.">
         <span id="name-error" class="error-message"></span>
 
         <label class="required" for="email">Email Address:</label>
-        <input type="email" id="email" name="email" required placeholder="Enter your email address" 
-               oninput="this.value = this.value.trim()">
+        <input type="email" id="email" name="email" required placeholder="Enter your email address" minlength="5"
+               maxlength="40" title="Please enter a valid email address">
         <span id="email-error" class="error-message"></span>
 
         <label for="employee-id">Employee ID</label>
         <input type="text" id="employee-id" name="employee-id" required minlength="7" maxlength="7"
-               placeholder="Enter Employee ID" pattern="^ATS0(?!000)[0-9]{3}$"
-               title="Employee ID should be in the format: ATS followed by 4 digits, starting from 0001 (cannot be 0000)">
+               placeholder="Enter Employee ID" pattern="^[ATS]{3}0(?!000)[0-9]{3}$"
+               title="Employee ID should be in the format: 3 uppercase letters followed by 4 digits, starting from 0001 (cannot be 0000)">
         <span id="id-error" class="error-message"></span>
 
         <label for="employee-department">Department</label>
@@ -479,7 +480,7 @@
       <div class="section">
         <h2><i class="fas fa-rupee-sign"></i> Final Paycheck Details</h2>
         <label for="final-paycheck">Final Paycheck Amount</label>
-        <input type="number" id="final-paycheck" name="final-paycheck" placeholder="Enter Final Paycheck Amount" required min="1000" max="100000" step="0.001" pattern="^\d+(\.\d{1,3})?$">
+        <input type="number" id="final-paycheck" name="final-paycheck" placeholder="Enter Final Paycheck Amount" required min="1000" max="100000" step="500">
         <span id="paycheck-error" class="error-message"></span>
 
         <label for="benefits-cleared">Benefits Cleared</label>
@@ -540,82 +541,34 @@
       }
 
       function validateName() {
-        const employeeName = document.getElementById('employee-name').value;
-        const trimmedName = employeeName.trim();
+        const employeeName = document.getElementById('employee-name').value.trim();
         const namePattern = /^[A-Za-z]+(?:\.[A-Za-z]+)*(?: [A-Za-z]+)*(?:\.[A-Za-z]+){0,3}$/;
-        const consecutiveSpacesPattern = /\s{2,}/;
-
-        if (employeeName !== trimmedName) {
-            showErrorMessage('name-error', "Name cannot have leading or trailing spaces.");
-            return false;
+        if (employeeName.length < 3 || employeeName.length > 100 || !namePattern.test(employeeName)) {
+          showErrorMessage('name-error', "Invalid Name: Must be 3-100 characters, no leading/trailing spaces, max 3 periods.");
+          return false;
+        } else {
+          showErrorMessage('name-error', '');
+          return true;
         }
-
-        if (consecutiveSpacesPattern.test(trimmedName)) {
-            showErrorMessage('name-error', "Name cannot contain consecutive spaces.");
-            return false;
-        }
-
-        if (trimmedName.length < 3 || trimmedName.length > 40 || !namePattern.test(trimmedName)) {
-            showErrorMessage('name-error', "Invalid Name: Must be 3-40 characters, no consecutive spaces, max 3 periods.");
-            return false;
-        }
-
-        showErrorMessage('name-error', '');
-        return true;
       }
 
       function validateEmail() {
-        const email = document.getElementById('email').value;
-        const trimmedEmail = email.trim();
-        const parts = trimmedEmail.split('@');
-        
-        if (email !== trimmedEmail) {
-            showErrorMessage('email-error', 'Email cannot contain leading or trailing spaces.');
-            return false;
+        const email = document.getElementById('email').value.trim();
+        const emailPattern = /^[a-zA-Z0-9]+@[a-zA-Z]+\.[a-zA-Z]{2,3}$/;
+        if (!emailPattern.test(email)) {
+          showErrorMessage('email-error', 'Please enter a valid email address.');
+          return false;
+        } else {
+          showErrorMessage('email-error', '');
+          return true;
         }
-        
-        if (parts.length !== 2) {
-            showErrorMessage('email-error', 'Email must contain exactly one @ symbol.');
-            return false;
-        }
-        
-        const localPart = parts[0];
-        const domain = parts[1];
-        
-        if (!/^[a-zA-Z]/.test(localPart)) {
-            showErrorMessage('email-error', 'Email must start with an alphabet.');
-            return false;
-        }
-        
-        if (!/^[a-zA-Z.]+$/.test(localPart)) {
-            showErrorMessage('email-error', 'Only alphabets and periods allowed before @.');
-            return false;
-        }
-        
-        if (/(^\.|\.\.|\.$)/.test(localPart)) {
-            showErrorMessage('email-error', 'Email cannot have leading, trailing, or consecutive periods.');
-            return false;
-        }
-        
-        if ((localPart.match(/\./g) || []).length > 3) {
-            showErrorMessage('email-error', 'Email can contain maximum 3 periods.');
-            return false;
-        }
-        
-        if (domain !== 'astrolitetech.com') {
-            showErrorMessage('email-error', 'Only @astrolitetech.com domain is allowed.');
-            return false;
-        }
-        
-        showErrorMessage('email-error', '');
-        return true;
       }
 
       function validateEmployeeId() {
         const employeeId = document.getElementById('employee-id').value.trim();
-        const idPattern = /^ATS0(?!000)[0-9]{3}$/;
+        const idPattern = /^[ATS]{3}0(?!000)[0-9]{3}$/;
         if (!idPattern.test(employeeId)) {
-          showErrorMessage('id-error', "Invalid Employee ID: Must start with ATS followed by 4 digits (e.g., ATS0123)");
+          showErrorMessage('id-error', "Invalid Employee ID: Format should be ABC0123.");
           return false;
         } else {
           showErrorMessage('id-error', '');
@@ -625,21 +578,13 @@
 
       function validatePaycheck() {
         const paycheck = document.getElementById('final-paycheck').value.trim();
-        const paycheckPattern = /^\d+(\.\d{1,3})?$/;
-        
-        if (!paycheckPattern.test(paycheck)) {
-          showErrorMessage('paycheck-error', "Invalid amount format. Maximum 3 decimal places allowed.");
-          return false;
-        }
-        
-        const amount = parseFloat(paycheck);
-        if (amount < 1000 || amount > 100000) {
+        if (paycheck < 1000 || paycheck > 100000) {
           showErrorMessage('paycheck-error', "Paycheck must be between 1000 and 100000.");
           return false;
+        } else {
+          showErrorMessage('paycheck-error', '');
+          return true;
         }
-        
-        showErrorMessage('paycheck-error', '');
-        return true;
       }
 
       function validateExitInterview() {
@@ -698,14 +643,14 @@
           laptopReturned: document.getElementById('laptop-returned').value,
           phoneReturned: document.getElementById('phone-returned').value,
           accessCardsReturned: document.getElementById('access-cards').value,
-          finalPaycheck: parseFloat(document.getElementById('final-paycheck').value),
+          finalPaycheck: parseInt(document.getElementById('final-paycheck').value),
           benefitsCleared: document.getElementById('benefits-cleared').value,
           exitInterview: document.getElementById('exit-interview').value.trim(),
           reasonForLeaving: document.getElementById('reason-for-leaving').value
         };
 
         try {
-          const response = await fetch('http://13.49.44.9:3054/api/offboarding/submit', {
+          const response = await fetch('http://13.49.68.57:3054/api/offboarding/submit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
@@ -734,6 +679,8 @@
       cancelSubmit.addEventListener('click', () => {
         confirmModal.style.display = 'none';
       });
+
+      
 
       document.getElementById('employee-name').addEventListener('input', validateName);
       document.getElementById('email').addEventListener('input', validateEmail);

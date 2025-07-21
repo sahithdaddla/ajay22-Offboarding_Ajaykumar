@@ -4,7 +4,7 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const port = 3421;
+const port = 3054;
 
 // PostgreSQL connection
 const pool = new Pool({
@@ -17,15 +17,12 @@ const pool = new Pool({
 
 // Middleware
 app.use(cors({
-  origin: [
-    'http://13.49.44.9:8219', // Frontend
-    'http://13.49.44.9:8220', // HR page
-    'http://13.49.44.9:3054', // Backend self
-    'http://127.0.0.1:5501'       // Local dev (optional)
-  ],
+  origin: ['http://13.49.68.57:8219', 'http://13.49.68.57:8220'],
   methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type']
+  allowedHeaders: ['Content-Type'],
+ credentials: true
 }));
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -131,9 +128,9 @@ pool.connect()
     console.log('✅ Connected to database');
     initializeDatabase().then(() => {
       app.listen(port, () => {
-        console.log(`🚀 Server running on http://13.49.44.9:${port}`);
-        console.log(`📄 Offboarding Form: http://13.49.44.9:${port}/offboarding.html`);
-        console.log(`📊 HR Offboarding Dashboard: http://13.49.44.9:${port}/hrOffboarding.html`);
+        console.log(`🚀 Server running on http://13.49.68.57:${port}`);
+        console.log(`📄 Offboarding Form: http://13.49.68.57:${port}/offboarding.html`);
+        console.log(`📊 HR Offboarding Dashboard: http://13.49.68.57:${port}/hrOffboarding.html`);
       });
     });
   })
